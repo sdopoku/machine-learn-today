@@ -33,11 +33,7 @@ def parse_taste_profile(taste_profile):
         if( not user_dict.has_key(user_id)): #if user_id not key of user_dict 
             user_dict[user_id] = {song_id:play_count} #create new userID key
         else:
-<<<<<<< HEAD
             user_dict[user_id][song_id] =play_count
-=======
-            userDict[userID][songID] =playCount
->>>>>>> 1ece14ce90c0438f54900e02ba98102cfbbdf693
             
         if(not song_dict.has_key(song_id)): 
             song_dict[song_id]=0 #Store a dummy value
