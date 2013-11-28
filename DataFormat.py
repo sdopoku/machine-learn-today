@@ -30,7 +30,7 @@ def parse_TasteProfile(tasteProfile):
         if( not userDict.has_key(userID)): #if userID not key of userDict 
             userDict[userID] = {songID:playCount} #create new userID key
         else:
-            userDict[useIDr][songID] =playCount
+            userDict[userID][songID] =playCount
             
         if(not songDict.has_key(songID)): 
             songDict[songID]=0 #Store a dummy value

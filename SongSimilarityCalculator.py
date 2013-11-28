@@ -11,16 +11,17 @@ Requires : - userDict and songList from the Dataparser program
 import numpy as np
 import DataFormat as df
 import bottleneck as bn
-import pandas p
+import pandas as p
 
 
 userDict = {}
 songList = ()
-songmatrix
-songdataframe
-top5similarsongs
+songmatrix = []
+songdataframe = p.DataFrame()
+top5similarsongs = []
+tasteProfile = 'D:/Personal/tempKia/MachineLearning/data/train_triplets_1M'
 
-#def initsimilaritycalculator:
+#def InitSimilarityCalculator:
 
 """
 - Initilaizes the variables used by SongSimilarityCalculator program
@@ -32,20 +33,20 @@ should be replaced once the input is available from the Dataparser program
 ------
 
 """
-def initsimilaritycalculator:
-	songmatrix = np.random.random((300, 300))
-	songdataframe = p.DataFrame(songmatrix, index = songList, column = songList)
+def InitSimilarityCalculator():
 	userDict, songList = df.parse_TasteProfile(tasteProfile)
-	songmatrix
+	songmatrix = np.random.random((len(songList), len(songList)))
+	songdataframe = p.DataFrame(songmatrix, index = songList, columns = songList)
+	
 
-#def calcsimilarity(userid):
+#def CalcSimilarSongs(userid):
 
 """
 - Calculates the top 5 similar songs for a given user
 - Input: 1. userid
 - Output 2. Array of top 5 songs(array of 5 songids) similar to the most frequently played song (by user = userid) 
 """
-def calcsimilarity(userid):
+def CalcSimilarSongs(userid):
 	totalplaycount,meanplaycount = 0,0;
 	usersongs = userDict[userid]
 	totalnumofsongs = len(usersongs)
@@ -55,7 +56,6 @@ def calcsimilarity(userid):
 
 	meanplaycount = totalplaycount/totalnumofsongs
 	highestnormalizedpc = 0.00
-	highnormpcsongid
 
 	for songid, pc in usersongs.iteritems():
 		usersongs[songid] = pc/meanplaycount
@@ -66,5 +66,41 @@ def calcsimilarity(userid):
 
 
 
-	return top5similarsongs = songdataframe.loc[highnormpcsongid][bn.argpartsort(-songdataframe.loc[highnormpcsongid], 5)[:5])].index.values
+	top5similarsongs = songdataframe.loc[highnormpcsongid][bn.argpartsort(-songdataframe.loc[highnormpcsongid], 5)[:5]].index.values
+	return top5similarsongs
 
+#def CalcSimilarUsersSongs(userid):
+
+"""
+- Calculates the top 5 similar songs for a given user
+- Input: 1. userid
+- Output 2. Array of top 5 songs(array of 5 songids) that are played by a most similar user
+"""
+def CalcSimilarUsersSongs(userid):
+	usersongsset = userDict[userid].keys()
+	usersongintersection = p.DataFrame(index = [userid])
+	top5similarusers = []
+	for otheruserid in userDict.iteritems():
+		otherusersongsset = userDict[otheruserid].keys()
+		usersongintersection.insert(0, otheruserid, len(np.intersect1d(usersongsset,otherusersongsset, False)), False)
+		top5similarusers = usersongintersection.loc[userid][bn.argpartsort(-usersongintersection.loc[userid], 5)[:5]].index.values
+	unlistenedsongs = np.array([])
+	for userid in top5similarusers:
+		otherusersongsset = userDict[otheruserid].keys()
+		np.union1d(unlistenedsongs, np.setdiff1d(otherusersongsset, usersongsset))
+		if(len(unlistenedsongs) >= 5):
+			break
+	return unlistenedsongs
+
+"""
+Some sample user ids
+>>> userDict.keys()[1]
+'85c1f87fea955d09b4bec2e36aee110927aedf9a'
+>>> userDict.keys()[2]
+'a308e9cb88a72f2260526863f83ec6b9a65a6845'
+>>> userDict.keys()[3]
+'1b0bb9f249026df9c9620501188aa18af0bc6a78'
+"""
+def Test(userid):
+        initsimilaritycalculator()
+        print CalcSimilarSongs('85c1f87fea955d09b4bec2e36aee110927aedf9a')
